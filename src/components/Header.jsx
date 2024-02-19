@@ -12,8 +12,10 @@ import React, { useState } from "react";
 import "react-date-range/dist/styles.css"; // main css file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 const Header = ({ type }) => {
+  const [destination, setDestination] = useState("");
   const [openDate, setOpenDate] = useState(false);
   const [date, setDate] = useState([
     {
@@ -28,6 +30,7 @@ const Header = ({ type }) => {
     children: 0,
     rooms: 1,
   });
+  const navigate = useNavigate();
 
   const handleOptions = (name, operation) => {
     setOptions((prev) => {
@@ -36,6 +39,10 @@ const Header = ({ type }) => {
         [name]: operation === "d" ? options[name] - 1 : options[name] + 1,
       };
     });
+  };
+
+  const handleSearch = () => {
+    navigate("/hotels", { state: { destination, date, options } });
   };
 
   return (
@@ -89,6 +96,7 @@ const Header = ({ type }) => {
                   type="text"
                   placeholder="Where are you going?"
                   className="border-none outline-none text-black"
+                  onChange={(e) => setDestination(e.target.value)}
                 />
               </div>
               <div className="flex items-center gap-2.5">
@@ -109,6 +117,7 @@ const Header = ({ type }) => {
                     onChange={(item) => setDate([item.selection])}
                     moveRangeOnFirstSelection={false}
                     ranges={date}
+                    minDate={new Date()}
                     className="absolute top-[43px] z-10"
                   />
                 )}
@@ -184,7 +193,10 @@ const Header = ({ type }) => {
                 )}
               </div>
               <div>
-                <button className="bg-[#0071c2] text-white border-none p-1 cursor-pointer font-medium w-fit">
+                <button
+                  className="bg-[#0071c2] text-white border-none p-1 cursor-pointer font-medium w-fit"
+                  onClick={handleSearch}
+                >
                   Search
                 </button>
               </div>
